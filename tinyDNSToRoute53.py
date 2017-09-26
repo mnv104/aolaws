@@ -253,7 +253,7 @@ class Route53(object):
 		     LOG.info("Importing A record for %s -> %s to Route53", d, r)
 		     try:
 		         self.__importARecords(zoneId, d, r)
-		     except botocore.errorfactory.InvalidChangeBatch as e:
+		     except Exception as e:
 		         LOG.error("Invalid TXT record update %s", e)
    	    for (d, r) in tdns.txtrecords.iteritems():
 	       s1 = re1.search(d)
@@ -263,7 +263,7 @@ class Route53(object):
 	             LOG.info("Importing TXT record for %s -> %s to Route53", d, r)
 		     try:
 		         self.__importTxtRecords(zoneId, d, r)
-		     except botocore.errorfactory.InvalidChangeBatch as e:
+		     except Exception as e:
 		         LOG.error("Invalid TXT record update %s", e)
 	    for (d, r) in tdns.mxrecords.iteritems():
 	       s1 = re1.search(d)
@@ -273,7 +273,7 @@ class Route53(object):
 	             LOG.info("Importing MX records for %s -> %s to Route53", d, r)
 		     try:
 		        self.__importMXRecords(zoneId, d, r)
-		     except botocore.errorfactory.InvalidChangeBatch as e:
+		     except Exception as e:
 		         LOG.error("Invalid MX record update %s", e)
 	    for (d, r) in tdns.cnamerecords.iteritems():
 	       s1 = re1.search(d)
@@ -283,7 +283,7 @@ class Route53(object):
 	             LOG.info("Importing CNAME records for %s -> %s to Route53", d, r)
 		     try:
 		         self.__importCNameRecords(zoneId, d, r)
-		     except botocore.errorfactory.InvalidChangeBatch as e:
+		     except Exception as e:
 		         LOG.error("Invalid CName record update %s", e)
 
         return None
