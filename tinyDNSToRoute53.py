@@ -208,33 +208,38 @@ class Route53(object):
 	   }
         )
 
+    class ChangeBatch(object):
+        def __init__(self, domainName, records, commentString):
+	    self.records = records
+	    resourceRecords = []
+	    for mx in sorted(records):
+		r = {}
+		r["Value"] = "{0} {1}".format(mx.order, mx.emailServer)
+		resourceRecords.append(r)
+
+	    resourceRecordSet = {}
+	    resourceRecordSet["Name"] = domainName
+	    resourceRecordSet["Type"] = "MX"
+	    resourceRecordSet["TTL"] = int(records[0].ttl)
+	    resourceRecordSet["ResourceRecords"] = resourceRecords
+	    rec = {}
+	    rec["Action"] = "UPSERT"
+	    rec["ResourceRecordSet"] = resourceRecordSet
+	    changes = []
+	    changes.append(rec)
+	    self.changeBatch = {}
+	    self.changeBatch["Comment"] = commentString
+	    self.changeBatch['Changes'] = changes
+
     def __importMXRecords(self, zoneId, domain, records):
 	d = datetime.datetime.now()
 	timestamp = d.strftime("%Y-%m-%d")
 	commentString = "[MX] Record change initiated on {0}".format(timestamp)
 	domainName = "{0}.".format(domain)
-        mxValueStr = "".join("{0} {1}\n".format(mx.order, mx.emailServer) for mx in sorted(records))
-	mxValueStr.strip('\n')
+	cb = self.ChangeBatch(domainName, records, commentString)
 	self.client.change_resource_record_sets(
 	   HostedZoneId=zoneId,
-	   ChangeBatch={
-              "Comment": commentString,
-	      "Changes" : [
-	         {
-	            "Action": "UPSERT",
-		    "ResourceRecordSet": {
-			"Name": domainName,
-			"Type": 'MX',
-			"TTL" : int(records[0].ttl),
-			"ResourceRecords": [
-			   {
-			      "Value" : mxValueStr
-			   }
-			]
-		     }
-		 }
-	      ]
-	   }
+	   ChangeBatch=cb.changeBatch
         )
 
     def importRecordsFromTinyDNS(self, tdns):
