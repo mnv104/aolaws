@@ -112,14 +112,14 @@ class TinyDNS(object):
 
     def getheader(self, zone):
         h = """\
-        $TTL 3600
-        @  IN  SOA ns1.artofliving.org. hostmaster.%s.     (
-                %s01           ; serial
-		14400          ; refresh
-	        3600           ; retry
-                1048576        ; expire
-		2560           ; minimum
-	) """ % (zone, datetime.datetime.now().strftime('%Y%m%d'))
+$TTL 3600
+@  IN  SOA ns1.artofliving.org. hostmaster.%s.     (
+	%s01           ; serial
+	14400          ; refresh
+	3600           ; retry
+	1048576        ; expire
+	2560           ; minimum
+) """ % (zone, datetime.datetime.now().strftime('%Y%m%d'))
 	return h
 
 
@@ -129,8 +129,8 @@ class TinyDNS(object):
 	    with open(z, 'w+') as fh:
 		fh.write(self.getheader(z))
 		fh.write('\n')
-                fh.write('{0:<45} IN  NS    {1}.\n'.format(' ', 'ns1.artofliving.org'))
-                fh.write('{0:<45} IN  NS    {1}.\n'.format(' ', 'ns2.artofliving.org'))
+                fh.write('{0:<45} IN  NS    {1}.\n'.format('@', 'ns1.artofliving.org'))
+                fh.write('{0:<45} IN  NS    {1}.\n'.format('@', 'ns2.artofliving.org'))
 	        re1 = re.compile(z)
 	        for r in self.records:
 		    s1 = re1.search(r.domainName)
